@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Tile from "@/components/TIle"; // Fixing import casing
 import { UserContext } from "@/context/contextApi";
 import axios from "axios";
+import { IP } from "@/constants/Contants";
 
 const Chat = () => {
   const { top, bottom } = useSafeAreaInsets();
@@ -12,11 +13,12 @@ const Chat = () => {
   const [friends, setFriends] = useState([]);
   useEffect(() => {
     async function getFriends() {
-      await axios.get(`/friends/${user._id}`).then((res) => {
-        setFriends(res.data);
-      });
+      await axios
+        .get(`http://${IP}:5000/api/social/v1/friends/${user._id}/`)
+        .then((res) => {
+          setFriends(res.data);
+        });
     }
-
     getFriends();
   }, []);
   return (
@@ -29,14 +31,14 @@ const Chat = () => {
       {/* Main Screen */}
       <View style={{ flex: 1, minHeight: height }}>
         {/* USERS */}
-        {friends.map((friend) => {
+        {friends.map((friend, i) => {
           return (
             <Tile
               name={friend.username}
               unread={10}
               lastSeen={"Last seen 10 minutes ago"}
               image={"./"}
-              key={friend._id}
+              key={`${friend._id},${Math.random()}`}
               idOfUser={friend._id}
             />
           );
